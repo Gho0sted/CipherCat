@@ -162,6 +162,16 @@ class CryptoUtils {
         }
     }
 
+    // Константы для AES
+    static AES_CONFIG = {
+        VERSION: 0x01,
+        SALT_LENGTH: 16,
+        IV_LENGTH: 12,
+        TAG_LENGTH: 16,
+        PBKDF2_ITERATIONS: 200000, // Увеличено для безопасности
+        KEY_LENGTH: 256
+    };
+
     // AES-256-GCM шифрование с PBKDF2 (WebCrypto API)
     static async aesEncrypt(text, password) {
         try {
@@ -170,8 +180,8 @@ class CryptoUtils {
             }
 
             // Генерируем соль и IV
-            const salt = window.crypto.getRandomValues(new Uint8Array(16));
-            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const salt = window.crypto.getRandomValues(new Uint8Array(this.AES_CONFIG.SALT_LENGTH));
+            const iv = window.crypto.getRandomValues(new Uint8Array(this.AES_CONFIG.IV_LENGTH));
 
             // Получаем ключ из пароля с помощью PBKDF2
             const keyMaterial = await window.crypto.subtle.importKey(
@@ -186,11 +196,11 @@ class CryptoUtils {
                 {
                     name: 'PBKDF2',
                     salt: salt,
-                    iterations: 100000, // Высокое количество итераций для безопасности
+                    iterations: this.AES_CONFIG.PBKDF2_ITERATIONS,
                     hash: 'SHA-256'
                 },
                 keyMaterial,
-                { name: 'AES-GCM', length: 256 },
+                { name: 'AES-GCM', length: this.AES_CONFIG.KEY_LENGTH },
                 false,
                 ['encrypt']
             );
@@ -202,17 +212,29 @@ class CryptoUtils {
                 new TextEncoder().encode(text)
             );
 
-            // Объединяем соль, IV и зашифрованные данные
-            const result = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
-            result.set(salt, 0);
-            result.set(iv, salt.length);
-            result.set(new Uint8Array(encrypted), salt.length + iv.length);
+            // Формат пакета: version(1B) | salt(16B) | iv(12B) | ciphertext(n) | tag(16B)
+            const result = new Uint8Array(1 + this.AES_CONFIG.SALT_LENGTH + this.AES_CONFIG.IV_LENGTH + encrypted.byteLength);
+            let offset = 0;
+            
+            // Версия
+            result[offset++] = this.AES_CONFIG.VERSION;
+            
+            // Соль
+            result.set(salt, offset);
+            offset += this.AES_CONFIG.SALT_LENGTH;
+            
+            // IV
+            result.set(iv, offset);
+            offset += this.AES_CONFIG.IV_LENGTH;
+            
+            // Зашифрованные данные (включая тег)
+            result.set(new Uint8Array(encrypted), offset);
 
             // Возвращаем в Base64
             return this.arrayBufferToBase64(result);
         } catch (error) {
             console.error('Ошибка AES шифрования:', error);
-            return '';
+            throw new Error('Ошибка шифрования: ' + error.message);
         }
     }
 
@@ -225,10 +247,26 @@ class CryptoUtils {
             // Декодируем из Base64
             const data = this.base64ToArrayBuffer(encryptedData);
             
+            if (data.byteLength < 1 + this.AES_CONFIG.SALT_LENGTH + this.AES_CONFIG.IV_LENGTH) {
+                throw new Error('Неверный формат зашифрованных данных');
+            }
+
+            let offset = 0;
+            
+            // Проверяем версию
+            const version = data[offset++];
+            if (version !== this.AES_CONFIG.VERSION) {
+                throw new Error(`Неподдерживаемая версия формата: ${version}`);
+            }
+            
             // Извлекаем соль, IV и зашифрованные данные
-            const salt = data.slice(0, 16);
-            const iv = data.slice(16, 28);
-            const encrypted = data.slice(28);
+            const salt = data.slice(offset, offset + this.AES_CONFIG.SALT_LENGTH);
+            offset += this.AES_CONFIG.SALT_LENGTH;
+            
+            const iv = data.slice(offset, offset + this.AES_CONFIG.IV_LENGTH);
+            offset += this.AES_CONFIG.IV_LENGTH;
+            
+            const encrypted = data.slice(offset);
 
             // Получаем ключ из пароля с помощью PBKDF2
             const keyMaterial = await window.crypto.subtle.importKey(
@@ -243,11 +281,11 @@ class CryptoUtils {
                 {
                     name: 'PBKDF2',
                     salt: salt,
-                    iterations: 100000,
+                    iterations: this.AES_CONFIG.PBKDF2_ITERATIONS,
                     hash: 'SHA-256'
                 },
                 keyMaterial,
-                { name: 'AES-GCM', length: 256 },
+                { name: 'AES-GCM', length: this.AES_CONFIG.KEY_LENGTH },
                 false,
                 ['decrypt']
             );
@@ -262,7 +300,7 @@ class CryptoUtils {
             return new TextDecoder().decode(decrypted);
         } catch (error) {
             console.error('Ошибка AES расшифровки:', error);
-            return '';
+            throw new Error('Ошибка расшифровки: ' + error.message);
         }
     }
 
@@ -346,23 +384,53 @@ class CryptoUtils {
 
     // Проверка сложности пароля для AES
     static hasPasswordComplexity(password) {
-        if (password.length < 8) return false;
+        if (password.length < 12) return false; // Увеличено до 12 символов
         
         let hasLower = false;
         let hasUpper = false;
         let hasDigit = false;
         let hasSpecial = false;
+        let hasCyrillic = false;
         
         for (const char of password) {
             if (char >= 'a' && char <= 'z') hasLower = true;
             else if (char >= 'A' && char <= 'Z') hasUpper = true;
             else if (char >= '0' && char <= '9') hasDigit = true;
             else if ('!@#$%^&*()_+-=[]{}|;:,.<>?'.includes(char)) hasSpecial = true;
+            else if (char >= 'а' && char <= 'я') hasCyrillic = true;
+            else if (char >= 'А' && char <= 'Я') hasCyrillic = true;
         }
         
-        // Требуем минимум 2 из 4 критериев
-        const criteria = [hasLower, hasUpper, hasDigit, hasSpecial].filter(Boolean).length;
-        return criteria >= 2;
+        // Требуем минимум 3 из 5 критериев
+        const criteria = [hasLower, hasUpper, hasDigit, hasSpecial, hasCyrillic].filter(Boolean).length;
+        return criteria >= 3;
+    }
+
+    // Получение силы пароля (0-100)
+    static getPasswordStrength(password) {
+        if (!password) return 0;
+        
+        let score = 0;
+        
+        // Длина
+        if (password.length >= 12) score += 20;
+        else if (password.length >= 8) score += 10;
+        
+        // Разнообразие символов
+        let hasLower = /[a-z]/.test(password);
+        let hasUpper = /[A-Z]/.test(password);
+        let hasDigit = /\d/.test(password);
+        let hasSpecial = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password);
+        let hasCyrillic = /[а-яА-Я]/.test(password);
+        
+        const charTypes = [hasLower, hasUpper, hasDigit, hasSpecial, hasCyrillic].filter(Boolean).length;
+        score += charTypes * 15;
+        
+        // Дополнительные бонусы
+        if (password.length >= 16) score += 10;
+        if (password.length >= 20) score += 10;
+        
+        return Math.min(score, 100);
     }
 
     // Получение информации о ключах для разных алгоритмов

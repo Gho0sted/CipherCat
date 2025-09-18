@@ -11,13 +11,26 @@ function createWindow() {
     minWidth: 800,
     minHeight: 600,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-      enableRemoteModule: true
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+      enableRemoteModule: false,
+      preload: path.join(__dirname, 'preload.js')
     },
     icon: path.join(__dirname, 'assets/icon.png'),
     titleBarStyle: 'default',
     show: false
+  });
+
+  // Удаляем меню для безопасности
+  mainWindow.removeMenu();
+
+  // Блокируем внешнюю навигацию
+  mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  mainWindow.webContents.on('will-navigate', (e, url) => {
+    if (!url.startsWith('file://')) {
+      e.preventDefault();
+    }
   });
 
   mainWindow.loadFile('index.html');
