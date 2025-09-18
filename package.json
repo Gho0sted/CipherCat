@@ -1,0 +1,51 @@
+{
+  "name": "coder-decoder",
+  "version": "1.0.0",
+  "description": "Beautiful text encryption/decryption application with Russian and English support",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=never"
+  },
+  "keywords": [
+    "encryption",
+    "decryption",
+    "cipher",
+    "text",
+    "security"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0"
+  },
+  "build": {
+    "appId": "com.coderdecoder.app",
+    "productName": "Coder Decoder",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  }
+}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coder Decoder - Шифрование текста</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <h1>Coder Decoder</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="btn btn-primary" id="aboutBtn">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Algorithm Selection -->
+                <div class="algorithm-section">
+                    <h2>Выберите алгоритм шифрования</h2>
+                    <div class="algorithm-grid">
+                        <div class="algorithm-card active" data-algorithm="caesar">
+                            <div class="algorithm-icon">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <h3>Шифр Цезаря</h3>
+                            <p>Простое смещение символов</p>
+                        </div>
+                        <div class="algorithm-card" data-algorithm="vigenere">
+                            <div class="algorithm-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <h3>Шифр Виженера</h3>
+                            <p>Полиалфавитное шифрование</p>
+                        </div>
+                        <div class="algorithm-card" data-algorithm="base64">
+                            <div class="algorithm-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3>Base64</h3>
+                            <p>Кодирование в Base64</p>
+                        </div>
+                        <div class="algorithm-card" data-algorithm="aes">
+                            <div class="algorithm-icon">
+                                <i class="fas fa-shield-virus"></i>
+                            </div>
+                            <h3>AES-256</h3>
+                            <p>Современное шифрование</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Input Section -->
+                <div class="key-section" id="keySection">
+                    <div class="key-input-group">
+                        <label for="keyInput">Ключ шифрования:</label>
+                        <div class="key-input-wrapper">
+                            <input type="text" id="keyInput" placeholder="Введите ключ...">
+                            <button class="btn btn-icon" id="generateKeyBtn" title="Сгенерировать случайный ключ">
+                                <i class="fas fa-dice"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="key-info" id="keyInfo">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Для шифра Цезаря введите число (сдвиг)</span>
+                    </div>
+                </div>
+
+                <!-- Text Processing Area -->
+                <div class="text-processing">
+                    <div class="text-area-container">
+                        <div class="text-area-header">
+                            <h3>Исходный текст</h3>
+                            <div class="text-actions">
+                                <button class="btn btn-sm btn-secondary" id="clearInputBtn">
+                                    <i class="fas fa-trash"></i> Очистить
+                                </button>
+                                <button class="btn btn-sm btn-secondary" id="loadFileBtn">
+                                    <i class="fas fa-folder-open"></i> Загрузить
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="inputText" placeholder="Введите текст для шифрования или дешифрования..."></textarea>
+                        <div class="char-count">
+                            <span id="inputCharCount">0</span> символов
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary btn-large" id="encryptBtn">
+                            <i class="fas fa-lock"></i>
+                            Зашифровать
+                        </button>
+                        <button class="btn btn-secondary btn-large" id="decryptBtn">
+                            <i class="fas fa-unlock"></i>
+                            Расшифровать
+                        </button>
+                    </div>
+
+                    <div class="text-area-container">
+                        <div class="text-area-header">
+                            <h3>Результат</h3>
+                            <div class="text-actions">
+                                <button class="btn btn-sm btn-secondary" id="copyResultBtn">
+                                    <i class="fas fa-copy"></i> Копировать
+                                </button>
+                                <button class="btn btn-sm btn-secondary" id="saveFileBtn">
+                                    <i class="fas fa-save"></i> Сохранить
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="outputText" placeholder="Результат появится здесь..." readonly></textarea>
+                        <div class="char-count">
+                            <span id="outputCharCount">0</span> символов
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Language Support -->
+                <div class="language-section">
+                    <h3>Поддержка языков</h3>
+                    <div class="language-badges">
+                        <span class="language-badge">
+                            <i class="fas fa-flag-usa"></i>
+                            English
+                        </span>
+                        <span class="language-badge">
+                            <i class="fas fa-flag"></i>
+                            Русский
+                        </span>
+                        <span class="language-badge">
+                            <i class="fas fa-globe"></i>
+                            Unicode
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Coder Decoder. Безопасное шифрование текста.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>О приложении</h2>
+                <button class="btn btn-icon" id="closeAboutModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="about-content">
+                    <div class="about-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Coder Decoder v1.0</h3>
+                    <p>Современное приложение для шифрования и дешифрования текста с поддержкой множества алгоритмов и языков.</p>
+                    
+                    <h4>Поддерживаемые алгоритмы:</h4>
+                    <ul>
+                        <li><strong>Шифр Цезаря</strong> - классическое шифрование со сдвигом</li>
+                        <li><strong>Шифр Виженера</strong> - полиалфавитное шифрование</li>
+                        <li><strong>Base64</strong> - кодирование в Base64</li>
+                        <li><strong>AES-256</strong> - современное симметричное шифрование</li>
+                    </ul>
+
+                    <h4>Особенности:</h4>
+                    <ul>
+                        <li>Поддержка русского и английского языков</li>
+                        <li>Современный и интуитивный интерфейс</li>
+                        <li>Сохранение и загрузка файлов</li>
+                        <li>Генерация случайных ключей</li>
+                        <li>Подсчет символов в реальном времени</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="crypto-utils.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
