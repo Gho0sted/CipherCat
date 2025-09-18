@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; object-src 'none';">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; object-src 'none';"
+    />
     <title>Coder Decoder - Шифрование текста</title>
     <link rel="stylesheet" href="styles.css" />
     <link
@@ -70,6 +73,13 @@
                 <h3>AES-256</h3>
                 <p>Современное шифрование</p>
               </div>
+              <div class="algorithm-card" data-algorithm="multi">
+                <div class="algorithm-icon">
+                  <i class="fas fa-layer-group"></i>
+                </div>
+                <h3>Многоэтапное</h3>
+                <p>Последовательное шифрование</p>
+              </div>
             </div>
           </div>
 
@@ -100,6 +110,59 @@
             </div>
           </div>
 
+          <!-- Многоэтапное шифрование -->
+          <div
+            class="multi-step-section"
+            id="multiStepSection"
+            style="display: none"
+          >
+            <div class="multi-step-header">
+              <h3>
+                <i class="fas fa-layer-group"></i> Многоэтапное шифрование
+              </h3>
+              <div class="multi-step-controls">
+                <button class="btn btn-small" id="addStepBtn">
+                  <i class="fas fa-plus"></i> Добавить этап
+                </button>
+                <button class="btn btn-small" id="clearStepsBtn">
+                  <i class="fas fa-trash"></i> Очистить
+                </button>
+              </div>
+            </div>
+            <div class="steps-container" id="stepsContainer">
+              <!-- Этапы будут добавляться динамически -->
+            </div>
+            <div class="multi-step-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="enableLogging" checked />
+                <span class="checkmark"></span>
+                Включить логирование этапов
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="saveMetadata" />
+                <span class="checkmark"></span>
+                Сохранять метаданные в файл
+              </label>
+            </div>
+          </div>
+
+          <!-- История этапов -->
+          <div class="steps-history" id="stepsHistory" style="display: none">
+            <div class="history-header">
+              <h3><i class="fas fa-history"></i> История этапов</h3>
+              <button
+                class="btn btn-icon"
+                id="clearHistoryBtn"
+                title="Очистить историю"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="history-content" id="historyContent">
+              <!-- История будет отображаться здесь -->
+            </div>
+          </div>
+
           <!-- Text Processing Area -->
           <div class="text-processing">
             <div class="text-area-container">
@@ -123,19 +186,23 @@
               </div>
             </div>
 
-                    <div class="action-buttons">
-                        <button class="btn btn-primary btn-large" id="encryptBtn">
-                            <i class="fas fa-lock"></i>
-                            Зашифровать
-                        </button>
-                        <button class="btn btn-icon btn-large" id="swapTextBtn" title="Поменять местами исходный текст и результат">
-                            <i class="fas fa-exchange-alt"></i>
-                        </button>
-                        <button class="btn btn-secondary btn-large" id="decryptBtn">
-                            <i class="fas fa-unlock"></i>
-                            Расшифровать
-                        </button>
-                    </div>
+            <div class="action-buttons">
+              <button class="btn btn-primary btn-large" id="encryptBtn">
+                <i class="fas fa-lock"></i>
+                Зашифровать
+              </button>
+              <button
+                class="btn btn-icon btn-large"
+                id="swapTextBtn"
+                title="Поменять местами исходный текст и результат"
+              >
+                <i class="fas fa-exchange-alt"></i>
+              </button>
+              <button class="btn btn-secondary btn-large" id="decryptBtn">
+                <i class="fas fa-unlock"></i>
+                Расшифровать
+              </button>
+            </div>
 
             <div class="text-area-container">
               <div class="text-area-header">
@@ -184,7 +251,7 @@
       <!-- Footer -->
       <footer class="footer">
         <div class="container">
-          <p>&copy; 2024 Coder Decoder. Безопасное шифрование текста.</p>
+          <p>&copy; 2025 Coder Decoder. Безопасное шифрование текста.</p>
         </div>
       </footer>
     </div>

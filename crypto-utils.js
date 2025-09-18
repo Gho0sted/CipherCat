@@ -449,54 +449,141 @@ class CryptoUtils {
         }
     }
 
-    // Многоэтапное кодирование/декодирование
-    static async multiStepEncrypt(text, steps) {
-        if (!text || !Array.isArray(steps) || steps.length === 0) return text;
-        
-        let result = text;
-        
-        for (const step of steps) {
-            const { algorithm, key } = step;
-            if (!algorithm) continue;
-            
-            try {
-                result = await this.encrypt(result, algorithm, key || '');
-                if (!result) {
-                    throw new Error(`Ошибка на шаге ${algorithm}`);
+                // Многоэтапное кодирование/декодирование с логированием
+                static async multiStepEncrypt(text, steps, enableLogging = true) {
+                    if (!text || !Array.isArray(steps) || steps.length === 0) return { result: text, log: [] };
+                    
+                    let result = text;
+                    const log = [];
+                    
+                    for (let i = 0; i < steps.length; i++) {
+                        const step = steps[i];
+                        const { algorithm, key } = step;
+                        if (!algorithm) continue;
+                        
+                        const stepNumber = i + 1;
+                        const stepName = this.getAlgorithmDisplayName(algorithm);
+                        
+                        try {
+                            const beforeText = result;
+                            result = await this.encrypt(result, algorithm, key || '');
+                            
+                            if (!result) {
+                                throw new Error(`Ошибка на шаге ${algorithm}`);
+                            }
+                            
+                            // Логируем этап
+                            if (enableLogging) {
+                                log.push({
+                                    step: stepNumber,
+                                    algorithm: algorithm,
+                                    algorithmName: stepName,
+                                    key: key || 'без ключа',
+                                    inputLength: beforeText.length,
+                                    outputLength: result.length,
+                                    timestamp: new Date().toISOString(),
+                                    operation: 'encrypt'
+                                });
+                            }
+                            
+                        } catch (error) {
+                            console.error(`Ошибка многоэтапного шифрования на шаге ${algorithm}:`, error);
+                            return { result: '', log: log, error: error.message };
+                        }
+                    }
+                    
+                    return { result, log };
                 }
-            } catch (error) {
-                console.error(`Ошибка многоэтапного шифрования на шаге ${algorithm}:`, error);
-                return '';
-            }
-        }
-        
-        return result;
-    }
 
-    static async multiStepDecrypt(text, steps) {
-        if (!text || !Array.isArray(steps) || steps.length === 0) return text;
-        
-        let result = text;
-        
-        // Выполняем шаги в обратном порядке
-        for (let i = steps.length - 1; i >= 0; i--) {
-            const step = steps[i];
-            const { algorithm, key } = step;
-            if (!algorithm) continue;
-            
-            try {
-                result = await this.decrypt(result, algorithm, key || '');
-                if (!result) {
-                    throw new Error(`Ошибка на шаге ${algorithm}`);
+                static async multiStepDecrypt(text, steps, enableLogging = true) {
+                    if (!text || !Array.isArray(steps) || steps.length === 0) return { result: text, log: [] };
+                    
+                    let result = text;
+                    const log = [];
+                    
+                    // Выполняем шаги в обратном порядке
+                    for (let i = steps.length - 1; i >= 0; i--) {
+                        const step = steps[i];
+                        const { algorithm, key } = step;
+                        if (!algorithm) continue;
+                        
+                        const stepNumber = steps.length - i;
+                        const stepName = this.getAlgorithmDisplayName(algorithm);
+                        
+                        try {
+                            const beforeText = result;
+                            result = await this.decrypt(result, algorithm, key || '');
+                            
+                            if (!result) {
+                                throw new Error(`Ошибка на шаге ${algorithm}`);
+                            }
+                            
+                            // Логируем этап
+                            if (enableLogging) {
+                                log.push({
+                                    step: stepNumber,
+                                    algorithm: algorithm,
+                                    algorithmName: stepName,
+                                    key: key || 'без ключа',
+                                    inputLength: beforeText.length,
+                                    outputLength: result.length,
+                                    timestamp: new Date().toISOString(),
+                                    operation: 'decrypt'
+                                });
+                            }
+                            
+                        } catch (error) {
+                            console.error(`Ошибка многоэтапного расшифровки на шаге ${algorithm}:`, error);
+                            return { result: '', log: log, error: error.message };
+                        }
+                    }
+                    
+                    return { result, log };
                 }
-            } catch (error) {
-                console.error(`Ошибка многоэтапного расшифровки на шаге ${algorithm}:`, error);
-                return '';
-            }
-        }
-        
-        return result;
-    }
+
+                // Получение отображаемого имени алгоритма
+                static getAlgorithmDisplayName(algorithm) {
+                    const names = {
+                        'caesar': 'Шифр Цезаря',
+                        'vigenere': 'Шифр Виженера',
+                        'base64': 'Base64',
+                        'aes': 'AES-256'
+                    };
+                    return names[algorithm] || algorithm;
+                }
+
+                // Создание метаданных для сохранения
+                static createMetadata(steps, log, originalText, finalResult) {
+                    return {
+                        version: '1.0',
+                        timestamp: new Date().toISOString(),
+                        steps: steps.map((step, index) => ({
+                            step: index + 1,
+                            algorithm: step.algorithm,
+                            algorithmName: this.getAlgorithmDisplayName(step.algorithm),
+                            key: step.key || 'без ключа',
+                            keyType: this.getKeyType(step.algorithm)
+                        })),
+                        log: log,
+                        statistics: {
+                            originalLength: originalText.length,
+                            finalLength: finalResult.length,
+                            stepsCount: steps.length,
+                            algorithms: [...new Set(steps.map(s => s.algorithm))]
+                        }
+                    };
+                }
+
+                // Получение типа ключа для отображения
+                static getKeyType(algorithm) {
+                    const types = {
+                        'caesar': 'число (сдвиг)',
+                        'vigenere': 'текст (ключевое слово)',
+                        'base64': 'не требуется',
+                        'aes': 'пароль'
+                    };
+                    return types[algorithm] || 'неизвестно';
+                }
 
     // Основной метод шифрования
     static async encrypt(text, algorithm, key) {

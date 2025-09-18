@@ -22,6 +22,10 @@ function createWindow() {
     show: false
   });
 
+  // Исправление ошибки GPU
+  app.commandLine.appendSwitch('--disable-gpu-sandbox');
+  app.commandLine.appendSwitch('--disable-software-rasterizer');
+
   // Удаляем меню для безопасности
   mainWindow.removeMenu();
 
