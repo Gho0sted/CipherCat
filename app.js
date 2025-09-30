@@ -16,6 +16,11 @@ class CoderDecoderApp {
     this.updateCharCounts();
     this.loadTheme();
 
+    // Скрываем визуализацию при старте
+    if (window.VisualizationAPI) {
+      window.VisualizationAPI.clear();
+    }
+
     // Убеждаемся, что поле ввода ключа доступно при инициализации
     const keyInput = document.getElementById("keyInput");
     if (keyInput) {
@@ -175,6 +180,11 @@ class CoderDecoderApp {
     // Показываем/скрываем соответствующие секции
     this.updateUIForAlgorithm();
     this.updateKeyInfo();
+
+    // При смене алгоритма прячем визуализацию до следующего запуска
+    if (window.VisualizationAPI) {
+      window.VisualizationAPI.clear();
+    }
 
     // Убеждаемся, что поле ввода доступно для редактирования
     const keyInput = document.getElementById("keyInput");
@@ -353,6 +363,16 @@ class CoderDecoderApp {
           this.stepHistory = [...this.stepHistory, ...log];
           this.updateStepHistoryDisplay();
         }
+        // Визуализация для многоэтапного режима: отображаем вход/выход целиком
+        if (window.VisualizationAPI) {
+          window.VisualizationAPI.render(
+            "multi",
+            operation,
+            inputText,
+            "",
+            result || ""
+          );
+        }
       } else {
         // Обычное шифрование
         const key = document.getElementById("keyInput").value;
@@ -379,6 +399,17 @@ class CoderDecoderApp {
             inputText,
             this.currentAlgorithm,
             key
+          );
+        }
+
+        // Визуализация для одиночного алгоритма
+        if (window.VisualizationAPI) {
+          window.VisualizationAPI.render(
+            this.currentAlgorithm,
+            operation,
+            inputText,
+            key,
+            result || ""
           );
         }
       }

@@ -4,6 +4,18 @@ const fs = require('fs');
 
 let mainWindow;
 
+// Отключаем аппаратное ускорение и GPU до создания окна
+app.disableHardwareAcceleration();
+app.commandLine.appendSwitch('--disable-gpu');
+app.commandLine.appendSwitch('--disable-gpu-sandbox');
+app.commandLine.appendSwitch('--disable-software-rasterizer');
+app.commandLine.appendSwitch('--disable-gpu-compositing');
+app.commandLine.appendSwitch('--use-angle', 'swiftshader');
+app.commandLine.appendSwitch('--disable-features', 'CanvasOopRasterization,WebGL');
+
+// Устанавливаем AppUserModelID для корректной иконки в таскбаре
+app.setAppUserModelId('com.ciphercat.app');
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -21,10 +33,6 @@ function createWindow() {
     titleBarStyle: 'default',
     show: false
   });
-
-  // Исправление ошибки GPU
-  app.commandLine.appendSwitch('--disable-gpu-sandbox');
-  app.commandLine.appendSwitch('--disable-software-rasterizer');
 
   // Удаляем меню для безопасности
   mainWindow.removeMenu();

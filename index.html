@@ -7,7 +7,7 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; object-src 'none';"
     />
-    <title>Coder Decoder - Шифрование текста</title>
+    <title>CipherCat - Шифрование текста</title>
     <link rel="stylesheet" href="styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
@@ -24,8 +24,8 @@
       <header class="header">
         <div class="header-content">
           <div class="logo">
-            <i class="fas fa-shield-alt"></i>
-            <h1>Coder Decoder</h1>
+            <img src="assets/icon-transparent.png" alt="CipherCat" class="logo-img" />
+            <h1>CipherCat</h1>
           </div>
           <div class="header-actions">
             <button class="btn btn-secondary" id="themeToggle">
@@ -41,6 +41,14 @@
       <!-- Main Content -->
       <main class="main-content">
         <div class="container">
+          <!-- Visualization -->
+          <section class="visualization-section">
+            <h2>Визуализация</h2>
+            <div id="visualizationContainer" class="visualization-container">
+              <div id="visualizationTitle" class="visualization-title">Визуализация</div>
+              <div id="visualizationBody" class="visualization-body"></div>
+            </div>
+          </section>
           <!-- Algorithm Selection -->
           <div class="algorithm-section">
             <h2>Выберите алгоритм шифрования</h2>
@@ -251,7 +259,7 @@
       <!-- Footer -->
       <footer class="footer">
         <div class="container">
-          <p>&copy; 2025 Coder Decoder. Безопасное шифрование текста.</p>
+          <p>&copy; 2025 CipherCat. Безопасное шифрование текста.</p>
         </div>
       </footer>
     </div>
@@ -270,7 +278,7 @@
             <div class="about-icon">
               <i class="fas fa-shield-alt"></i>
             </div>
-            <h3>Coder Decoder v1.0</h3>
+            <h3>CipherCat v1.0</h3>
             <p>
               Современное приложение для шифрования и дешифрования текста с
               поддержкой множества алгоритмов и языков.
@@ -305,6 +313,7 @@
     </div>
 
     <script src="crypto-utils.js"></script>
+    <script src="visualization.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
