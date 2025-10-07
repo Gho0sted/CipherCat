@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; object-src 'none';"
+    />
+    <meta name="description" content="CipherCat - современное приложение для шифрования и дешифрования текста с поддержкой множества алгоритмов" />
+    <meta name="keywords" content="шифрование, криптография, AES, Цезарь, Виженер, Base64" />
+    <meta name="author" content="CipherCat" />
+    <title>CipherCat - Шифрование текста</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="visualization-optimized.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Header -->
+      <header class="header" role="banner">
+        <div class="header-content">
+          <div class="logo">
+            <img src="assets/icon-transparent.png" alt="CipherCat" class="logo-img" />
+            <h1 data-localize="app-title"></h1>
+          </div>
+          <nav class="header-actions" role="toolbar" aria-label="Основные действия">
+            <button 
+              class="btn btn-secondary" 
+              data-action="toggle-theme"
+              aria-label="Переключить тему"
+              title="Переключить тему"
+            >
+              <i class="fas fa-moon" aria-hidden="true"></i>
+            </button>
+            <button 
+              class="btn btn-primary" 
+              data-action="about"
+              aria-label="О программе"
+              title="О программе"
+            >
+              <i class="fas fa-info-circle" aria-hidden="true"></i>
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content" role="main">
+        <div class="container">
+          <!-- Visualization Section -->
+          <section class="visualization-section" aria-labelledby="visualizationSectionTitle">
+            <h2 id="visualizationSectionTitle" data-localize="visualization-title"></h2>
+            <div id="visualizationContainer" class="visualization-container" role="img" aria-labelledby="visualizationContainerTitle" aria-label="Визуализация процесса шифрования">
+              <div id="visualizationContainerTitle" class="visualization-title" data-localize="visualization-title"></div>
+              <div id="visualizationBody" class="visualization-body"></div>
+            </div>
+          </section>
+
+          <!-- Algorithm Selection Section -->
+          <section class="algorithm-section" aria-labelledby="algorithmTitle">
+            <h2 id="algorithmTitle" data-localize="algorithm-selection">Выберите алгоритм шифрования</h2>
+            <div class="algorithm-grid" role="radiogroup" aria-labelledby="algorithmTitle" tabindex="0">
+              <div 
+                class="algorithm-card active" 
+                data-algorithm="caesar"
+                role="radio"
+                aria-checked="true"
+                tabindex="0"
+                aria-label="Шифр Цезаря"
+              >
+                <div class="algorithm-icon" aria-hidden="true">
+                  <i class="fas fa-key"></i>
+                </div>
+                <h3 data-localize="caesar-title">Шифр Цезаря</h3>
+                <p data-localize="caesar-description">Простое смещение символов</p>
+              </div>
+              <div 
+                class="algorithm-card" 
+                data-algorithm="reverseCaesar"
+                role="radio"
+                aria-checked="false"
+                tabindex="0"
+                aria-label="Обратный Цезарь"
+              >
+                <div class="algorithm-icon" aria-hidden="true">
+                  <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3 data-localize="reverse-caesar-title">Обратный Цезарь</h3>
+                <p data-localize="reverse-caesar-description">Шифр Цезаря с обратным сдвигом</p>
+              </div>
+              <div 
+                class="algorithm-card" 
+                data-algorithm="atbash"
+                role="radio"
+                aria-checked="false"
+                tabindex="0"
+                aria-label="Атбаш"
+              >
+                <div class="algorithm-icon" aria-hidden="true">
+                  <i class="fas fa-sort-alpha-down"></i>
+                </div>
+                <h3 data-localize="atbash-title">Атбаш</h3>
+                <p data-localize="atbash-description">Моноалфавитный шифр с обратным алфавитом</p>
+              </div>
+              <div 
+                class="algorithm-card" 
+                data-algorithm="vigenere"
+                role="radio"
+                aria-checked="false"
+                tabindex="0"
+                aria-label="Шифр Виженера"
+              >
+                <div class="algorithm-icon" aria-hidden="true">
+                  <i class="fas fa-lock"></i>
+                </div>
+                <h3 data-localize="vigenere-title">Шифр Виженера</h3>
+                <p data-localize="vigenere-description">Полиалфавитное шифрование</p>
+              </div>
+              <div 
+                class="algorithm-card" 
+                data-algorithm="base64"
+                role="radio"
+                aria-checked="false"
+                tabindex="0"
+                aria-label="Base64"
+              >
+                <div class="algorithm-icon" aria-hidden="true">
+                  <i class="fas fa-code"></i>
+                </div>
+                <h3 data-localize="base64-title">Base64</h3>
+                <p data-localize="base64-description">Кодирование в Base64</p>
+              </div>
+              <div 
+                class="algorithm-card" 
+                data-algorithm="aes"
+                role="radio"
+                aria-checked="false"
+                tabindex="0"
+                aria-label="AES-256"
+              >
+                <div class="algorithm-icon" aria-hidden="true">
+                  <i class="fas fa-shield-virus"></i>
+                </div>
+                <h3 data-localize="aes-title">AES-256</h3>
+                <p data-localize="aes-description">Современное шифрование</p>
+              </div>
+              <div 
+                class="algorithm-card" 
+                data-algorithm="multi"
+                role="radio"
+                aria-checked="false"
+                tabindex="0"
+                aria-label="Многоэтапное шифрование"
+              >
+                <div class="algorithm-icon" aria-hidden="true">
+                  <i class="fas fa-layer-group"></i>
+                </div>
+                <h3 data-localize="multi-title">Многоэтапное</h3>
+                <p data-localize="multi-description">Последовательное шифрование</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Key Input Section -->
+          <section class="key-section visible" id="keySection" aria-labelledby="keyTitle">
+            <h3 id="keyTitle" data-localize="key-input-title">Ключ шифрования</h3>
+            <div class="key-input-group">
+              <label for="keyInput" data-localize="key-label">Ключ шифрования:</label>
+              <div class="key-input-wrapper">
+                <input
+                  type="text"
+                  id="keyInput"
+                  placeholder="Введите ключ..."
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-describedby="keyInfo"
+                  aria-required="true"
+                />
+                <button
+                  class="btn btn-icon"
+                  data-action="generate-key"
+                  title="Сгенерировать случайный ключ"
+                  aria-label="Сгенерировать случайный ключ"
+                >
+                  <i class="fas fa-dice" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="key-info" id="keyInfo" role="status" aria-live="polite">
+              <i class="fas fa-info-circle" aria-hidden="true"></i>
+              <span data-localize="key-info-caesar">Для шифра Цезаря введите число (сдвиг)</span>
+            </div>
+            
+            <!-- Настройки для всех алгоритмов -->
+            <div class="algorithm-options" role="group" aria-labelledby="algorithmOptionsTitle">
+              <h4 id="algorithmOptionsTitle" class="sr-only" data-localize="algorithm-options">Настройки алгоритма</h4>
+              <label class="checkbox-label">
+                <input type="checkbox" id="enableVisualizationSingle" checked data-action="toggle-visualization" />
+                <span class="checkmark"></span>
+                <span data-localize="enable-visualization">Показать визуализацию процесса</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="enableLoggingSingle" />
+                <span class="checkmark"></span>
+                <span data-localize="enable-logging">Включить логирование процесса</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="saveMetadataSingle" />
+                <span class="checkmark"></span>
+                <span data-localize="save-metadata">Сохранять метаданные в файл</span>
+              </label>
+            </div>
+          </section>
+
+          <!-- Multi-step Encryption Section -->
+          <section
+            class="multi-step-section"
+            id="multiStepSection"
+            aria-labelledby="multiStepTitle"
+          >
+            <div class="multi-step-header">
+              <h3 id="multiStepTitle">
+                <i class="fas fa-layer-group" aria-hidden="true"></i> 
+                <span data-localize="multi-step-title">Многоэтапное шифрование</span>
+              </h3>
+              <div class="multi-step-controls" role="toolbar" aria-label="Управление этапами">
+                <button class="btn btn-small" data-action="add-step" aria-label="Добавить этап">
+                  <i class="fas fa-plus" aria-hidden="true"></i> 
+                  <span data-localize="add-step">Добавить этап</span>
+                </button>
+                <button class="btn btn-small" data-action="clear-steps" aria-label="Очистить этапы">
+                  <i class="fas fa-trash" aria-hidden="true"></i> 
+                  <span data-localize="clear-steps">Очистить</span>
+                </button>
+              </div>
+            </div>
+            <div class="steps-container" id="stepsContainer" role="list" aria-label="Список этапов шифрования">
+              <!-- Этапы будут добавляться динамически -->
+            </div>
+            <div class="multi-step-options" role="group" aria-labelledby="optionsTitle">
+              <h4 id="optionsTitle" class="sr-only" data-localize="options-title">Настройки</h4>
+              <label class="checkbox-label">
+                <input type="checkbox" id="enableLogging" checked />
+                <span class="checkmark"></span>
+                <span data-localize="enable-logging">Включить логирование этапов</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="saveMetadata" />
+                <span class="checkmark"></span>
+                <span data-localize="save-metadata">Сохранять метаданные в файл</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="enableVisualization" checked data-action="toggle-visualization" />
+                <span class="checkmark"></span>
+                <span data-localize="enable-visualization">Показать визуализацию процесса</span>
+              </label>
+            </div>
+          </section>
+
+          <!-- Steps History Section -->
+          <section class="steps-history hidden" id="stepsHistory" aria-labelledby="historyTitle">
+            <div class="history-header">
+              <h3 id="historyTitle">
+                <i class="fas fa-history" aria-hidden="true"></i> 
+                <span data-localize="history-title">История этапов</span>
+              </h3>
+              <button
+                class="btn btn-icon"
+                data-action="clear-history"
+                title="Очистить историю"
+                aria-label="Очистить историю"
+              >
+                <i class="fas fa-times" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="history-content" id="historyContent" role="log" aria-live="polite" aria-label="История операций">
+              <!-- История будет отображаться здесь -->
+            </div>
+          </section>
+
+          <!-- Text Processing Section -->
+          <section class="text-processing" aria-labelledby="textProcessingTitle">
+            <h2 id="textProcessingTitle" class="sr-only" data-localize="text-processing-title">Обработка текста</h2>
+            
+            <!-- Input Text Area -->
+            <article class="text-area-container">
+              <header class="text-area-header">
+                <h3 data-localize="input-text-title">Исходный текст</h3>
+                <div class="text-actions" role="toolbar" aria-label="Действия с исходным текстом">
+                  <button class="btn btn-sm btn-secondary" data-action="clear-input" aria-label="Очистить текст">
+                    <i class="fas fa-trash" aria-hidden="true"></i> 
+                    <span data-localize="clear">Очистить</span>
+                  </button>
+                  <button class="btn btn-sm btn-secondary" data-action="load-file" aria-label="Загрузить файл">
+                    <i class="fas fa-folder-open" aria-hidden="true"></i> 
+                    <span data-localize="load">Загрузить</span>
+                  </button>
+                </div>
+              </header>
+              <textarea
+                id="inputText"
+                placeholder="Введите текст для шифрования или дешифрования..."
+                aria-label="Поле ввода исходного текста"
+                aria-describedby="inputCharCount"
+              ></textarea>
+              <div class="char-count" id="inputCharCount" role="status" aria-live="polite">
+                <span id="inputCharCountValue">0</span> 
+                <span data-localize="characters">символов</span>
+              </div>
+            </article>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons" role="toolbar" aria-label="Основные действия шифрования">
+              <button 
+                class="btn btn-primary btn-large" 
+                data-action="encrypt"
+                aria-label="Зашифровать текст"
+              >
+                <i class="fas fa-lock" aria-hidden="true"></i>
+                <span data-localize="encrypt">Зашифровать</span>
+              </button>
+              <button
+                class="btn btn-icon btn-large"
+                data-action="swap-text"
+                title="Поменять местами исходный текст и результат"
+                aria-label="Поменять местами тексты"
+              >
+                <i class="fas fa-exchange-alt" aria-hidden="true"></i>
+              </button>
+              <button 
+                class="btn btn-secondary btn-large" 
+                data-action="decrypt"
+                aria-label="Расшифровать текст"
+              >
+                <i class="fas fa-unlock" aria-hidden="true"></i>
+                <span data-localize="decrypt">Расшифровать</span>
+              </button>
+            </div>
+
+            <!-- Output Text Area -->
+            <article class="text-area-container">
+              <header class="text-area-header">
+                <h3 data-localize="output-text-title">Результат</h3>
+                <div class="text-actions" role="toolbar" aria-label="Действия с результатом">
+                  <button class="btn btn-sm btn-secondary" data-action="copy-result" aria-label="Копировать результат">
+                    <i class="fas fa-copy" aria-hidden="true"></i> 
+                    <span data-localize="copy">Копировать</span>
+                  </button>
+                  <button class="btn btn-sm btn-secondary" data-action="save-file" aria-label="Сохранить файл">
+                    <i class="fas fa-save" aria-hidden="true"></i> 
+                    <span data-localize="save">Сохранить</span>
+                  </button>
+                </div>
+              </header>
+              <textarea
+                id="outputText"
+                placeholder="Результат появится здесь..."
+                readonly
+                aria-label="Поле результата"
+                aria-describedby="outputCharCount"
+              ></textarea>
+              <div class="char-count" id="outputCharCount" role="status" aria-live="polite">
+                <span id="outputCharCountValue">0</span> 
+                <span data-localize="characters">символов</span>
+              </div>
+            </article>
+          </section>
+
+          <!-- Language Support Section -->
+          <section class="language-section" aria-labelledby="languageTitle">
+            <h3 id="languageTitle" data-localize="language-support">Поддержка языков</h3>
+            <div class="language-badges" role="group" aria-label="Поддерживаемые языки">
+              <span class="language-badge" data-lang="en">
+                <i class="fas fa-flag-usa" aria-hidden="true"></i>
+                <span data-localize="english">English</span>
+              </span>
+              <span class="language-badge" data-lang="ru">
+                <i class="fas fa-flag" aria-hidden="true"></i>
+                <span data-localize="russian">Русский</span>
+              </span>
+              <span class="language-badge">
+                <i class="fas fa-globe" aria-hidden="true"></i>
+                <span data-localize="unicode">Unicode</span>
+              </span>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer" role="contentinfo">
+        <div class="container">
+          <p>&copy; 2025 CipherCat. <span data-localize="footer-text">Безопасное шифрование текста.</span></p>
+        </div>
+      </footer>
+    </div>
+
+    <!-- About Modal -->
+    <div 
+      class="modal" 
+      id="aboutModal" 
+      role="dialog" 
+      aria-labelledby="modalTitle" 
+      aria-hidden="true"
+      aria-modal="true"
+    >
+      <div class="modal-content">
+        <header class="modal-header">
+          <h2 id="modalTitle" data-localize="about-title">О приложении</h2>
+          <button 
+            class="btn btn-icon" 
+            data-action="close-modal"
+            data-modal="aboutModal"
+            aria-label="Закрыть модальное окно"
+          >
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </header>
+        <div class="modal-body">
+          <div class="about-content">
+            <div class="about-icon" aria-hidden="true">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>CipherCat v2.0</h3>
+            <p data-localize="about-description">
+              Современное приложение для шифрования и дешифрования текста с
+              поддержкой множества алгоритмов и языков.
+            </p>
+
+            <h4 data-localize="supported-algorithms">Поддерживаемые алгоритмы:</h4>
+            <ul>
+              <li>
+                <strong data-localize="caesar-name">Шифр Цезаря</strong> - 
+                <span data-localize="caesar-info">классическое шифрование со сдвигом</span>
+              </li>
+              <li>
+                <strong data-localize="vigenere-name">Шифр Виженера</strong> - 
+                <span data-localize="vigenere-info">полиалфавитное шифрование</span>
+              </li>
+              <li>
+                <strong data-localize="base64-name">Base64</strong> - 
+                <span data-localize="base64-info">кодирование в Base64</span>
+              </li>
+              <li>
+                <strong data-localize="aes-name">AES-256</strong> - 
+                <span data-localize="aes-info">современное симметричное шифрование</span>
+              </li>
+            </ul>
+
+            <h4 data-localize="features">Особенности:</h4>
+            <ul>
+              <li data-localize="feature-languages">Поддержка русского и английского языков</li>
+              <li data-localize="feature-interface">Современный и интуитивный интерфейс</li>
+              <li data-localize="feature-files">Сохранение и загрузка файлов</li>
+              <li data-localize="feature-keys">Генерация случайных ключей</li>
+              <li data-localize="feature-counter">Подсчет символов в реальном времени</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Templates for reusable components -->
+    <template id="textActionsTemplate">
+      <div class="text-actions" role="toolbar">
+        <button class="btn btn-sm btn-secondary" data-action="clear">
+          <i class="fas fa-trash" aria-hidden="true"></i> 
+          <span data-localize="clear">Очистить</span>
+        </button>
+        <button class="btn btn-sm btn-secondary" data-action="load">
+          <i class="fas fa-folder-open" aria-hidden="true"></i> 
+          <span data-localize="load">Загрузить</span>
+        </button>
+      </div>
+    </template>
+
+    <template id="stepTemplate">
+      <div class="step-item" role="listitem">
+        <div class="step-number" aria-label="Номер этапа"></div>
+        <div class="step-content">
+          <select class="step-algorithm" data-step-algorithm aria-label="Алгоритм этапа">
+            <option value="caesar" data-localize="caesar-title">Шифр Цезаря</option>
+            <option value="reverseCaesar" data-localize="reverse-caesar-title">Обратный Цезарь</option>
+            <option value="vigenere" data-localize="vigenere-title">Шифр Виженера</option>
+            <option value="atbash" data-localize="atbash-title">Атбаш</option>
+            <option value="base64" data-localize="base64-title">Base64</option>
+            <option value="aes" data-localize="aes-title">AES-256</option>
+          </select>
+          <input 
+            type="text" 
+            class="step-key" 
+            data-step-key 
+            placeholder="Введите ключ..."
+            aria-label="Ключ для этапа"
+          />
+          <button 
+            class="btn btn-icon" 
+            data-generate-step-key 
+            title="Сгенерировать ключ"
+            aria-label="Сгенерировать ключ"
+          >
+            <i class="fas fa-dice" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="step-actions">
+          <button 
+            class="btn btn-icon btn-danger" 
+            data-remove-step 
+            title="Удалить этап"
+            aria-label="Удалить этап"
+          >
+            <i class="fas fa-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <!-- Language switcher (hidden by default) -->
+    <div class="language-switcher hidden" id="languageSwitcher">
+      <button class="btn btn-sm" data-lang="ru" aria-label="Русский язык">RU</button>
+      <button class="btn btn-sm" data-lang="en" aria-label="English language">EN</button>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="crypto-utils-optimized.js"></script>
+    <script src="visualization.js"></script>
+    <script type="module" src="app-optimized.js"></script>
+  </body>
+</html>

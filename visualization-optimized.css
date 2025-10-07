@@ -1,0 +1,504 @@
+/**
+ * Оптимизированные стили для системы визуализации
+ * Поддержка тем, виртуализации и ленивой загрузки
+ * 
+ * @author Ghosted (@Gho0sted)
+ * @project CipherCat (https://github.com/Gho0sted/CipherCat)
+ */
+
+/* CSS переменные для тем */
+:root {
+  --viz-input-color: #8b5cf6;
+  --viz-output-color: #10b981;
+  --viz-key-color: #3b82f6;
+  --viz-arrow-color: #6b7280;
+  --viz-bg-color: #f9fafb;
+  --viz-border-color: #e5e7eb;
+  --viz-text-color: #111827;
+  --viz-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Темная тема */
+[data-theme="dark"] {
+  --viz-input-color: #a78bfa;
+  --viz-output-color: #34d399;
+  --viz-key-color: #60a5fa;
+  --viz-arrow-color: #9ca3af;
+  --viz-bg-color: #1f2937;
+  --viz-border-color: #374151;
+  --viz-text-color: #f9fafb;
+  --viz-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Основные стили визуализации */
+.visualization-section {
+  background: var(--viz-bg-color);
+  border: 1px solid var(--viz-border-color);
+  border-radius: 8px;
+  box-shadow: var(--viz-shadow);
+  margin: 1rem 0;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.visualization-section.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.visualization-section:not(.show) {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+/* Заголовок визуализации */
+#visualizationContainerTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--viz-text-color);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--viz-border-color);
+}
+
+/* Тело визуализации */
+#visualizationBody {
+  min-height: 100px;
+  position: relative;
+}
+
+.visualization-empty {
+  text-align: center;
+  color: var(--viz-text-color);
+  opacity: 0.6;
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* Блоки визуализации */
+.viz-block {
+  background: var(--viz-bg-color);
+  border: 1px solid var(--viz-border-color);
+  border-radius: 6px;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.viz-block-title {
+  background: var(--viz-border-color);
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  color: var(--viz-text-color);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.viz-pre {
+  padding: 1rem;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: auto;
+}
+
+/* Цветовые классы */
+.viz-violet {
+  color: var(--viz-input-color);
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.viz-green {
+  color: var(--viz-output-color);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.viz-blue {
+  color: var(--viz-key-color);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Бейджи */
+.viz-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 0.125rem;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+/* Стрелка */
+.viz-arrow {
+  text-align: center;
+  color: var(--viz-arrow-color);
+  font-size: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+/* Таблицы */
+.viz-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background: var(--viz-bg-color);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: var(--viz-shadow);
+}
+
+.viz-table th,
+.viz-table td {
+  padding: 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--viz-border-color);
+}
+
+.viz-table th {
+  background: var(--viz-border-color);
+  font-weight: 600;
+  color: var(--viz-text-color);
+  font-size: 0.875rem;
+}
+
+.viz-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Маппинг символов */
+.viz-mapping {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--viz-bg-color);
+  border-radius: 6px;
+  border: 1px solid var(--viz-border-color);
+}
+
+.viz-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0.5rem 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.viz-input {
+  color: var(--viz-input-color);
+}
+
+.viz-output {
+  color: var(--viz-output-color);
+}
+
+/* Inline символы */
+.viz-ch {
+  display: inline-block;
+  padding: 0.125rem 0.25rem;
+  margin: 0.0625rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  min-width: 1rem;
+  text-align: center;
+}
+
+/* Статистика */
+.viz-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--viz-bg-color);
+  border-radius: 6px;
+  border: 1px solid var(--viz-border-color);
+}
+
+.viz-stats > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: var(--viz-border-color);
+  border-radius: 4px;
+}
+
+.viz-stats span {
+  font-weight: 600;
+  color: var(--viz-text-color);
+}
+
+/* Key-Value пары */
+.viz-kv {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.viz-kv > div {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  background: var(--viz-bg-color);
+  border-radius: 4px;
+  border: 1px solid var(--viz-border-color);
+}
+
+.viz-kv > div:first-child {
+  font-weight: 600;
+  color: var(--viz-text-color);
+}
+
+/* Подзаголовок */
+.viz-subtitle {
+  font-size: 0.875rem;
+  color: var(--viz-text-color);
+  opacity: 0.8;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--viz-border-color);
+}
+
+/* Подсказка */
+.viz-hint {
+  font-size: 0.75rem;
+  color: var(--viz-text-color);
+  opacity: 0.6;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Уведомление */
+.visualization-note {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: var(--viz-key-color);
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+
+/* Ошибка */
+.visualization-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
+
+.visualization-error h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.visualization-error p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+}
+
+.visualization-error small {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Виртуализация */
+.virtual-scroll-container {
+  height: 300px;
+  overflow: auto;
+  border: 1px solid var(--viz-border-color);
+  border-radius: 6px;
+  background: var(--viz-bg-color);
+}
+
+.virtual-viewport {
+  position: relative;
+  width: 100%;
+}
+
+.virtual-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.virtual-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--viz-border-color);
+}
+
+/* Ленивая загрузка */
+.lazy-progress {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--viz-bg-color);
+  border-radius: 6px;
+  border: 1px solid var(--viz-border-color);
+}
+
+.lazy-progress-bar {
+  width: 0%;
+  height: 8px;
+  background: var(--viz-key-color);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  margin-bottom: 0.5rem;
+}
+
+.lazy-progress-text {
+  font-size: 0.875rem;
+  color: var(--viz-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.lazy-load-btn {
+  background: var(--viz-key-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.lazy-load-btn:hover:not(:disabled) {
+  background: var(--viz-key-color);
+  opacity: 0.9;
+}
+
+.lazy-load-btn:disabled {
+  background: var(--viz-border-color);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.lazy-item {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--viz-border-color);
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.lazy-item:last-child {
+  border-bottom: none;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.viz-block,
+.viz-table,
+.viz-mapping {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .visualization-section {
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+  }
+  
+  .viz-table {
+    font-size: 0.75rem;
+  }
+  
+  .viz-table th,
+  .viz-table td {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .viz-line {
+    font-size: 0.75rem;
+  }
+  
+  .viz-ch {
+    font-size: 0.75rem;
+    min-width: 0.875rem;
+  }
+  
+  .lazy-progress {
+    padding: 0.75rem;
+  }
+}
+
+/* Высокий контраст */
+@media (prefers-contrast: high) {
+  :root {
+    --viz-input-color: #0000ff;
+    --viz-output-color: #008000;
+    --viz-key-color: #ff0000;
+    --viz-border-color: #000000;
+    --viz-text-color: #000000;
+    --viz-bg-color: #ffffff;
+  }
+  
+  .viz-badge {
+    border-width: 2px;
+  }
+}
+
+/* Уменьшенная анимация */
+@media (prefers-reduced-motion: reduce) {
+  .visualization-section,
+  .viz-block,
+  .viz-table,
+  .viz-mapping {
+    animation: none;
+    transition: none;
+  }
+  
+  .lazy-progress-bar {
+    transition: none;
+  }
+}

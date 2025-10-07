@@ -1,0 +1,205 @@
+{
+  "name": "ciphercat",
+  "version": "1.0.0",
+  "description": "Beautiful text encryption/decryption application with Russian and English support",
+  "main": "main.js",
+  "homepage": "https://github.com/Gho0sted/CipherCat",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gho0sted/CipherCat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Gho0sted/CipherCat/issues"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=never",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux",
+    "lint": "eslint *.js modules/*.js",
+    "lint:fix": "eslint *.js modules/*.js --fix",
+    "audit": "npm audit",
+    "audit:fix": "npm audit fix",
+    "audit:high": "npm audit --audit-level=high",
+    "outdated": "npm outdated",
+    "update": "npm update",
+    "release": "standard-version",
+    "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "postinstall": "electron-builder install-app-deps",
+    "clean": "rimraf dist",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "encryption",
+    "decryption",
+    "cipher",
+    "text",
+    "security",
+    "electron",
+    "desktop",
+    "cryptography",
+    "aes",
+    "caesar",
+    "vigenere"
+  ],
+  "author": {
+    "name": "Ghosted",
+    "email": "ghosted@example.com",
+    "url": "https://github.com/Gho0sted"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "electron": "^38.2.1",
+    "electron-builder": "^24.9.1",
+    "eslint": "^8.56.0",
+    "rimraf": "^5.0.5",
+    "standard-version": "^9.5.0"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0"
+  },
+  "build": {
+    "appId": "com.ciphercat.app",
+    "productName": "CipherCat",
+    "copyright": "Copyright © 2024 Your Name",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*",
+      "!**/*.md",
+      "!**/*.test.js",
+      "!**/*.spec.js",
+      "!**/test/**/*",
+      "!**/tests/**/*",
+      "!**/*.log",
+      "!**/.git/**/*",
+      "!**/.gitignore",
+      "!**/.eslintrc*",
+      "!**/package-lock.json",
+      "!**/yarn.lock",
+      "!**/dist/**/*",
+      "!**/build/**/*",
+      "!**/.vscode/**/*",
+      "!**/.idea/**/*",
+      "!**/coverage/**/*",
+      "!**/docs/**/*",
+      "!**/examples/**/*",
+      "!**/screenshots/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "requestedExecutionLevel": "asInvoker",
+      "sign": false,
+      "verifyUpdateCodeSignature": false,
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "publisherName": "Ghosted",
+      "forceCodeSigning": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "category": "public.app-category.utilities",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "category": "Utility",
+      "maintainer": "Ghosted <ghosted@example.com>",
+      "desktop": {
+        "Name": "CipherCat",
+        "Comment": "Secure text encryption/decryption application",
+        "Keywords": "encryption;decryption;cipher;security;",
+        "StartupWMClass": "ciphercat"
+      },
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "CipherCat",
+      "include": "build/installer.nsh"
+    },
+    "dmg": {
+      "title": "CipherCat ${version}",
+      "icon": "assets/icon.icns",
+      "background": "assets/dmg-background.png",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "Gho0sted",
+      "repo": "CipherCat"
+    }
+  }
+}
